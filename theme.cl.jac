@@ -1,0 +1,78 @@
+import from "@jac/mobui" { StyleSheet }
+
+glob:pub LIGHT: dict = {
+    "bg": "#F4F5EF", "surface": "#FFFFFF", "border": "#E2E6DC",
+    "text": "#202820", "muted": "#748071", "accent": "#245B3E",
+    "accentText": "#FFFFFF", "soft": "#E9EFE6", "earth": "#C98953",
+    "warning": "#A34B36", "map": "#E1E9D7"
+};
+glob:pub S: dict = {"xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 22, "xxl": 30};
+glob:pub R: dict = {"sm": 10, "md": 16, "lg": 22, "pill": 999};
+glob:pub F: dict = {"xs": 11, "sm": 13, "md": 15, "lg": 19, "xl": 27, "xxl": 34};
+
+def:pub buildStyles(C: dict) -> any {
+    return StyleSheet.create({
+        "screen": {"flex": 1, "backgroundColor": C["bg"]},
+        "scrollContent": {"paddingTop": 54, "paddingBottom": 116, "paddingHorizontal": 20, "gap": 24},
+        "header": {"flexDirection": "row", "alignItems": "center", "justifyContent": "space-between"},
+        "brandline": {"flexDirection": "row", "alignItems": "center", "gap": 9},
+        "brandMark": {"width": 34, "height": 34, "borderRadius": 12, "backgroundColor": C["accent"], "alignItems": "center", "justifyContent": "center"},
+        "brandGlyph": {"color": C["accentText"], "fontSize": 18, "fontWeight": "bold"},
+        "brand": {"fontSize": 17, "fontWeight": "bold", "color": C["text"]},
+        "eyebrow": {"fontSize": 11, "fontWeight": "bold", "color": C["accent"], "letterSpacing": 1.3},
+        "title": {"fontSize": F["xxl"], "fontWeight": "bold", "color": C["text"], "lineHeight": 39},
+        "subtitle": {"fontSize": F["sm"], "color": C["muted"], "lineHeight": 20},
+        "sectionTitle": {"fontSize": F["lg"], "fontWeight": "bold", "color": C["text"]},
+        "tiny": {"fontSize": F["xs"], "color": C["muted"]},
+        "body": {"fontSize": F["md"], "color": C["text"]},
+        "card": {"backgroundColor": C["surface"], "borderRadius": R["lg"], "borderWidth": 1, "borderColor": C["border"], "padding": S["lg"], "gap": S["md"]},
+        "row": {"flexDirection": "row", "alignItems": "center", "gap": S["sm"]},
+        "spread": {"flexDirection": "row", "alignItems": "center", "justifyContent": "space-between"},
+        "locationIcon": {"width": 38, "height": 38, "borderRadius": 13, "backgroundColor": C["soft"], "alignItems": "center", "justifyContent": "center"},
+        "locationPin": {"fontSize": 18, "color": C["accent"]},
+        "search": {"flexDirection": "row", "alignItems": "center", "height": 50, "paddingHorizontal": 15, "gap": 10, "backgroundColor": C["surface"], "borderWidth": 1, "borderColor": C["border"], "borderRadius": R["md"]},
+        "searchGlyph": {"fontSize": 18, "color": C["muted"]},
+        "searchInput": {"flex": 1, "color": C["text"], "fontSize": F["md"]},
+        "hero": {"height": 188, "borderRadius": R["lg"], "overflow": "hidden", "backgroundColor": "#264C38", "justifyContent": "flex-end", "padding": S["lg"]},
+        "heroImage": {"position": "absolute", "top": 0, "left": 0, "right": 0, "bottom": 0, "width": "100%", "height": "100%"},
+        "heroShade": {"position": "absolute", "top": 0, "left": 0, "right": 0, "bottom": 0, "backgroundColor": "rgba(18,42,29,0.38)"},
+        "heroTitle": {"fontSize": 25, "fontWeight": "bold", "color": "#FFFFFF"},
+        "heroSub": {"fontSize": F["sm"], "color": "#E8F0E6"},
+        "heroContent": {"gap": 5},
+        "button": {"minHeight": 50, "borderRadius": R["md"], "backgroundColor": C["accent"], "flexDirection": "row", "alignItems": "center", "justifyContent": "center", "gap": 9, "paddingHorizontal": 16},
+        "buttonText": {"fontSize": F["md"], "fontWeight": "bold", "color": C["accentText"]},
+        "outlineButton": {"height": 42, "borderRadius": R["pill"], "borderWidth": 1, "borderColor": C["border"], "paddingHorizontal": 15, "alignItems": "center", "justifyContent": "center", "backgroundColor": C["surface"]},
+        "outlineText": {"fontSize": F["sm"], "fontWeight": "600", "color": C["text"]},
+        "destImageWrap": {"height": 148, "borderRadius": R["md"], "overflow": "hidden", "backgroundColor": C["soft"]},
+        "destImage": {"width": "100%", "height": "100%"},
+        "destName": {"fontSize": F["lg"], "fontWeight": "bold", "color": C["text"]},
+        "destMeta": {"fontSize": F["sm"], "color": C["muted"]},
+        "chipRow": {"flexDirection": "row", "gap": 8, "flexWrap": "wrap"},
+        "chip": {"borderRadius": R["pill"], "paddingHorizontal": 10, "paddingVertical": 6, "backgroundColor": C["soft"]},
+        "chipText": {"fontSize": 11, "fontWeight": "600", "color": C["accent"]},
+        "riskChip": {"borderRadius": R["pill"], "paddingHorizontal": 10, "paddingVertical": 6, "backgroundColor": "#F8ECE5"},
+        "riskText": {"fontSize": 11, "fontWeight": "600", "color": C["warning"]},
+        "weather": {"flexDirection": "row", "alignItems": "center", "gap": 13, "backgroundColor": "#E9EFE6", "borderRadius": R["lg"], "padding": S["lg"]},
+        "weatherIcon": {"fontSize": 25, "color": C["accent"]},
+        "weatherTemp": {"fontSize": 22, "fontWeight": "bold", "color": C["text"]},
+        "weatherInfo": {"flex": 1, "gap": 3},
+        "notice": {"backgroundColor": "#F6EFE4", "borderColor": "#E8DCC7", "borderRadius": R["md"], "borderWidth": 1, "padding": S["md"]},
+        "noticeText": {"fontSize": F["xs"], "color": "#795C3D", "lineHeight": 17},
+        "map": {"height": 210, "borderRadius": R["lg"], "overflow": "hidden", "backgroundColor": C["map"], "justifyContent": "center", "alignItems": "center", "padding": S["lg"]},
+        "mapLines": {"position": "absolute", "top": 20, "left": -10, "width": 360, "height": 150, "borderRadius": R["pill"], "borderWidth": 2, "borderColor": "#C7D4BB", "transform": [{"rotate": "-12deg"}]},
+        "mapInner": {"position": "absolute", "top": 48, "left": 55, "width": 260, "height": 120, "borderRadius": R["pill"], "borderWidth": 2, "borderColor": "#CFDCC4", "transform": [{"rotate": "20deg"}]},
+        "mapPin": {"width": 38, "height": 38, "borderRadius": R["pill"], "backgroundColor": C["accent"], "alignItems": "center", "justifyContent": "center", "borderWidth": 3, "borderColor": "#FFFFFF"},
+        "mapPinText": {"fontSize": 17, "color": "#FFFFFF"},
+        "mapLabel": {"position": "absolute", "bottom": 12, "left": 14, "fontSize": F["xs"], "fontWeight": "600", "color": C["muted"]},
+        "filterScroll": {"flexDirection": "row", "gap": 8, "paddingRight": 16},
+        "tabs": {"position": "absolute", "bottom": 0, "left": 0, "right": 0, "height": 82, "backgroundColor": C["surface"], "borderTopWidth": 1, "borderTopColor": C["border"], "flexDirection": "row", "alignItems": "center", "justifyContent": "space-around", "paddingBottom": 12, "paddingHorizontal": 8},
+        "tab": {"alignItems": "center", "justifyContent": "center", "gap": 4, "minWidth": 56},
+        "tabIcon": {"fontSize": 19, "color": C["muted"]},
+        "tabActive": {"fontSize": 10, "fontWeight": "bold", "color": C["accent"]},
+        "tabInactive": {"fontSize": 10, "color": C["muted"]},
+        "profileCircle": {"width": 72, "height": 72, "borderRadius": R["pill"], "backgroundColor": C["soft"], "alignItems": "center", "justifyContent": "center"},
+        "profileInitial": {"fontSize": 27, "fontWeight": "bold", "color": C["accent"]},
+        "separator": {"height": 1, "backgroundColor": C["border"]},
+        "emptyState": {"alignItems": "center", "paddingVertical": 30, "gap": 8}
+    });
+}
