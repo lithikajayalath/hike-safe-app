@@ -13,7 +13,7 @@ def:pub ExploreMap(onMyLocation: Callable[[str, str], None]) -> JsxElement {
                     lambda (position: any) {
                         successHandler.call(None, str(position.coords.latitude), str(position.coords.longitude));
                     },
-                    lambda (_error: any) {},
+                    lambda (_error: any) { locationMessage = "Location permission denied or GPS unavailable. You can continue browsing without GPS."; },
                     {"enableHighAccuracy": True, "timeout": 10000, "maximumAge": 0}
                 );
                 locationMessage = "Waiting for browser permission. Denied/unavailable location leaves browsing available.";
@@ -34,7 +34,7 @@ def:pub ExploreMap(onMyLocation: Callable[[str, str], None]) -> JsxElement {
         <View style={styles.row}>
             <Pressable style={styles.outlineButton} onPress={lambda { locationMessage = "Map pan controls are unavailable until a tile provider is configured."; }}><Text style={styles.outlineText}>Pan</Text></Pressable>
             <Pressable style={styles.outlineButton} onPress={lambda { locationMessage = "Map zoom controls are unavailable until a tile provider is configured."; }}><Text style={styles.outlineText}>Zoom</Text></Pressable>
-            <Pressable style={styles.button} onPress={lambda { requestLocation(); }}><Text style={styles.buttonText}>{"Requesting…" if busy else "My Location"}</Text></Pressable>
+            <Pressable style={styles.button} onPress={lambda { requestLocation(); }}><Text style={styles.buttonText}>My Location</Text></Pressable>
         </View>
         <Text style={styles.tiny}>{locationMessage}</Text>
         <Text style={styles.tiny}>Map tiles and attribution are omitted until an approved tile service is configured. GPS accuracy and distances are not simulated.</Text>
