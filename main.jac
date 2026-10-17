@@ -1,6 +1,7 @@
 import from "@jac/mobui" { View, Text, Pressable, TextInput, ScrollView, Image, useWindowDimensions }
 import from .theme { LIGHT, buildStyles }
 import from .ExploreMap { ExploreMap }
+import from .HikeTracker { HikeTracker }
 
 
 glob styles = buildStyles(LIGHT);
@@ -144,7 +145,7 @@ def:pub app -> JsxElement {
                 <View style={styles.notice}><Text style={styles.noticeText}>Development samples only. Risk, access, hazards, camping, and trail facts are unverified.</Text></View></View>;
             }
             elif activeTab == "Saved" { <View style={{"gap": 18}}><Text style={styles.title}>Saved trails</Text>{savedCards}</View>; }
-            elif activeTab == "Start Hike" { <View style={{"gap": 18}}><Text style={styles.title}>Plan a safe hike.</Text><View style={styles.card}><Text style={styles.body}>Check current access and weather locally. Tell someone your route and return time. Carry water and suitable footwear.</Text></View><Pressable style={styles.button} onPress={lambda { selectTab("Explore"); }}><Text style={styles.buttonText}>Choose a trail</Text></Pressable></View>; }
+            elif activeTab == "Start Hike" { <HikeTracker/>; }
             else { <View style={{"gap": 18}}><Text style={styles.title}>Profile</Text><View style={styles.card}><Text style={styles.body}>Hiker preferences and personal details will appear here.</Text></View></View>; }}
         </ScrollView>
         {if detailId == "" { <View style={styles.tabs}>{for (i, tab) in enumerate(tabs) { <Pressable key={tab} style={styles.tab} onPress={lambda { selectTab(tab); }}><Text style={styles.tabIcon}>{icons[i]}</Text><Text style={styles.tabActive if activeTab == tab else styles.tabInactive}>{tab}</Text></Pressable> }}</View> }}
