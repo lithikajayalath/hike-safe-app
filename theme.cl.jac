@@ -73,6 +73,20 @@ def:pub buildStyles(C: dict) -> any {
         "profileCircle": {"width": 72, "height": 72, "borderRadius": R["pill"], "backgroundColor": C["soft"], "alignItems": "center", "justifyContent": "center"},
         "profileInitial": {"fontSize": 27, "fontWeight": "bold", "color": C["accent"]},
         "separator": {"height": 1, "backgroundColor": C["border"]},
-        "emptyState": {"alignItems": "center", "paddingVertical": 30, "gap": 8}
+        "emptyState": {"alignItems": "center", "paddingVertical": 30, "gap": 8},
+        "detailHero": {"height": 230, "borderRadius": R["lg"], "overflow": "hidden", "backgroundColor": "#264C38"},
+        "detailPhoto": {"width": "100%", "height": "100%"},
+        "detailHeader": {"position": "absolute", "left": 16, "right": 16, "bottom": 16, "gap": 5},
+        "backButton": {"alignSelf": "flex-start", "height": 40, "paddingHorizontal": 14, "borderRadius": R["pill"], "backgroundColor": C["surface"], "alignItems": "center", "justifyContent": "center"},
+        "riskUnknown": {"backgroundColor": "#ECEDE8", "borderRadius": R["pill"], "paddingVertical": 8, "paddingHorizontal": 12},
+        "riskUnknownText": {"fontSize": F["sm"], "fontWeight": "bold", "color": C["muted"]},
+        "filterLabel": {"fontSize": F["xs"], "fontWeight": "bold", "color": C["muted"]},
+        "filterActive": {"backgroundColor": C["accent"], "borderColor": C["accent"]},
+        "filterActiveText": {"fontSize": F["xs"], "fontWeight": "bold", "color": C["accentText"]},
+        "mapDetail": {"height": 150, "borderRadius": R["md"], "backgroundColor": C["map"], "alignItems": "center", "justifyContent": "center", "padding": S["lg"]},
+        "mapDetailText": {"fontSize": F["sm"], "fontWeight": "600", "color": C["muted"], "textAlign": "center"},
+        "factLabel": {"fontSize": F["xs"], "fontWeight": "600", "color": C["muted"]},
+        "factValue": {"fontSize": F["sm"], "fontWeight": "600", "color": C["text"]},
+        "detailSection": {"gap": S["sm"]}
     });
 }
