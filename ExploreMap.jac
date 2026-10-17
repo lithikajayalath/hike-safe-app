@@ -3,31 +3,25 @@ import from .theme { buildStyles, LIGHT }
 glob styles = buildStyles(LIGHT);
 
 def:pub ExploreMap(onMyLocation: Callable[[str, str], None]) -> JsxElement {
-    has locationMessage: str = "Map tile provider is not configured. Destination pins are hidden because coordinates are unverified.",
-        busy: bool = False;
+    has locationMessage: str = "Map tile provider is not configured. Destination pins are hidden because coordinates are unverified.";
     def requestLocation {
         if Platform.OS == "web" {
             if navigator and navigator.geolocation {
-                busy = True;
                 geo: any = navigator.geolocation;
+                successHandler = onMyLocation;
                 geo.getCurrentPosition(
                     lambda (position: any) {
-                        busy = False;
-                        locationMessage = "Your current location was received. No map marker or destination distance is drawn without a configured tile layer and verified mountain coordinates.";
-                        onMyLocation(str(position.coords.latitude), str(position.coords.longitude));
+                        successHandler.call(None, str(position.coords.latitude), str(position.coords.longitude));
                     },
-                    lambda (error: any) {
-                        busy = False;
-                        locationMessage = "Location permission denied or GPS unavailable. Browsing the destination list remains available.";
-                    },
+                    lambda (_error: any) {},
                     {"enableHighAccuracy": True, "timeout": 10000, "maximumAge": 0}
                 );
-                locationMessage = "Waiting for location permission…";
+                locationMessage = "Waiting for browser permission. Denied/unavailable location leaves browsing available.";
             } else {
                 locationMessage = "Geolocation is unavailable in this browser. Browse the destination list without GPS.";
             }
         } else {
-            locationMessage = "Device location is not supported by the current MobUI map integration. Browse the destination list without GPS.";
+            locationMessage = "Device location is not supported by this map build. Browse the destination list without GPS.";
         }
     }
     return <View style={styles.card}>
