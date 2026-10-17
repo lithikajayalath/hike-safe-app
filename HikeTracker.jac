@@ -1,9 +1,11 @@
-import from "@jac/mobui" { View, Text, Pressable, Platform }
+import from "@jac/mobui" { View, Text, Pressable, Platform, TextInput }
 import from .theme { buildStyles, LIGHT }
 glob styles = buildStyles(LIGHT);
 
-def:pub HikeTracker() -> JsxElement {
+def:pub HikeTracker(contactName: str, contactPhone: str, onSaveContact: Callable[[str, str], None], mountainName: str = "") -> JsxElement {
     has status: str = "Ready. Location permission will be requested only when tracking starts.",
+        emergencyName: str = contactName, emergencyPhone: str = contactPhone,
+        waterReady: bool = False, firstAidReady: bool = False, phoneReady: bool = False, weatherReady: bool = False, trustedReady: bool = False,
         tracking: bool = False, paused: bool = False, sharing: bool = False,
         latitude: str = "", longitude: str = "", accuracy: str = "",
         startMs: float = 0.0, elapsedSec: float = 0.0, distanceKm: float = 0.0,
@@ -80,6 +82,20 @@ def:pub HikeTracker() -> JsxElement {
         } else { status = "No current GPS fix to copy."; }
     }
     def stopSharing { sharing = False; status = "Sharing stopped. No public link or ongoing share is active."; }
+    def sendEmergencyDraft {
+        coordsText = latitude + ", " + longitude if latitude and longitude else "Location unavailable; GPS permission may be denied or no fix obtained.";
+        destinationText = mountainName if mountainName else "Mountain not selected";
+        emergencyText = "HikeSafe emergency message. I may need help. Destination: " + destinationText + ". Last known coordinates: " + coordsText + ". Please contact me.";
+        nav: any = navigator;
+        if latitude and longitude and nav.share {
+            nav.share({"title": "Emergency hiking message", "text": emergencyText});
+            status = "Emergency message prepared in the device share sheet. It has not been sent until you choose a recipient and send it.";
+        } elif nav.clipboard {
+            nav.clipboard.writeText(emergencyText);
+            status = "Emergency message copied. It has not been sent; share it with your contact or emergency services.";
+        } else { status = emergencyText; }
+    }
+    def saveEmergencyContact { onSaveContact(emergencyName, emergencyPhone); status = "Emergency contact saved in this app session."; }
 
     speedText = "Unavailable";
     if elapsed > 0.0 { speedText = str(round(distanceKm / (elapsed / 3600.0), 2)) + " km/h"; }
@@ -99,6 +115,15 @@ def:pub HikeTracker() -> JsxElement {
         </View>
         <View style={styles.row}><Pressable style={styles.button} onPress={lambda { startTracking(); }}><Text style={styles.buttonText}>{"Resume" if paused else "Start hike"}</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { pauseTracking(); }}><Text style={styles.outlineText}>Pause</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { stopTracking(); }}><Text style={styles.outlineText}>Stop</Text></Pressable></View>
         <View style={styles.row}><Pressable style={styles.outlineButton} onPress={lambda { shareLocation(); }}><Text style={styles.outlineText}>Share My Location</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { copyCoordinates(); }}><Text style={styles.outlineText}>Copy coordinates</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { stopSharing(); }}><Text style={styles.outlineText}>Stop sharing</Text></Pressable></View>
+        <View style={styles.card}><Text style={styles.sectionTitle}>Safety checklist</Text>
+            <Pressable onPress={lambda { waterReady = not waterReady; }}><Text style={styles.body}>{"✓" if waterReady else "○"} Water</Text></Pressable>
+            <Pressable onPress={lambda { firstAidReady = not firstAidReady; }}><Text style={styles.body}>{"✓" if firstAidReady else "○"} First-aid kit</Text></Pressable>
+            <Pressable onPress={lambda { phoneReady = not phoneReady; }}><Text style={styles.body}>{"✓" if phoneReady else "○"} Charged phone</Text></Pressable>
+            <Pressable onPress={lambda { weatherReady = not weatherReady; }}><Text style={styles.body}>{"✓" if weatherReady else "○"} Weather check</Text></Pressable>
+            <Pressable onPress={lambda { trustedReady = not trustedReady; }}><Text style={styles.body}>{"✓" if trustedReady else "○"} Notify a trusted contact</Text></Pressable>
+        </View>
+        <View style={styles.card}><Text style={styles.sectionTitle}>Emergency contact</Text><TextInput style={styles.searchInput} value={emergencyName} placeholder="Contact name" placeholderTextColor={LIGHT["muted"]} onChangeText={lambda (v: str) { emergencyName = v; }}/><TextInput style={styles.searchInput} value={emergencyPhone} placeholder="Phone number" placeholderTextColor={LIGHT["muted"]} keyboardType="phone-pad" onChangeText={lambda (v: str) { emergencyPhone = v; }}/><Pressable style={styles.outlineButton} onPress={lambda { saveEmergencyContact(); }}><Text style={styles.outlineText}>Save emergency contact</Text></Pressable><Text style={styles.tiny}>Contact is stored locally in app state only; no account or server storage exists.</Text></View>
+        <View style={styles.card}><Text style={styles.sectionTitle}>Emergency SOS</Text><Text style={styles.body}>Current coordinates: {latitude + ", " + longitude if latitude and longitude else "Unavailable; GPS permission may be denied or no fix obtained."}</Text><Pressable style={[styles.button, {"backgroundColor": "#9C3D32"}]} onPress={lambda { sendEmergencyDraft(); }}><Text style={styles.buttonText}>Share emergency message</Text></Pressable><Text style={styles.tiny}>The device share sheet or clipboard prepares a message; HikeSafe does not dispatch emergency services or notify anyone automatically.</Text></View>
         <Text style={styles.tiny}>Session data is temporary and local only. No backend, persistent session store, or live sharing service is configured.</Text>
     </View>;
 }
