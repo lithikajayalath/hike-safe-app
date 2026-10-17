@@ -11,7 +11,8 @@ def:pub ExploreMap(onMyLocation: Callable[[str, str], None]) -> JsxElement {
                 successHandler = onMyLocation;
                 geo.getCurrentPosition(
                     lambda (position: any) {
-                        successHandler.call(None, str(position.coords.latitude), str(position.coords.longitude));
+                        successHandler(str(position.coords.latitude), str(position.coords.longitude));
+                        locationMessage = "Current browser location received. Destination pins remain unavailable until real destination coordinates are verified.";
                     },
                     lambda (_error: any) { locationMessage = "Location permission denied or GPS unavailable. You can continue browsing without GPS."; },
                     {"enableHighAccuracy": True, "timeout": 10000, "maximumAge": 0}
