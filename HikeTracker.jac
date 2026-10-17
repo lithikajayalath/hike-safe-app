@@ -103,6 +103,19 @@ def:pub HikeTracker(contactName: str, contactPhone: str, onSaveContact: Callable
         <Text style={styles.eyebrow}>FOREGROUND GPS ONLY</Text><Text style={styles.title}>Hiking tracker</Text>
         <View style={styles.notice}><Text style={styles.noticeText}>Your location stays private. Sharing uses the device share sheet or coordinate copy. No public link or background tracking.</Text></View>
         <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Health &amp; fitness</Text>
+            <Text style={styles.factLabel}>Current hike distance</Text><Text style={styles.factValue}>{str(round(distanceKm, 2))} km · approximate straight-line GPS estimate</Text>
+            <Text style={styles.factLabel}>Elapsed duration</Text><Text style={styles.factValue}>{durationText} · measured from this session timer</Text>
+            <Text style={styles.factLabel}>Average speed</Text><Text style={styles.factValue}>{speedText} · estimated from approximate distance</Text>
+            <Text style={styles.factLabel}>Elevation gain</Text><Text style={styles.factValue}>Unavailable · reliable altitude not provided by current fixes</Text>
+            <Text style={styles.factLabel}>Steps · calories</Text><Text style={styles.factValue}>Unavailable · no supported health data source is configured</Text>
+        </View>
+        <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Completed hikes</Text>
+            <Text style={styles.body}>No saved hike history is available. Sessions are kept temporarily in memory and are not persisted.</Text>
+            <Text style={styles.factLabel}>History totals</Text><Text style={styles.factValue}>Distance · duration · elevation · calories: unavailable</Text>
+        </View>
+        <View style={styles.card}>
             <Text style={styles.sectionTitle}>{"Sharing active" if sharing else ("Tracking paused" if paused else ("Tracking active" if tracking else "Ready to start"))}</Text><Text style={styles.body}>{status}</Text>
             <Text style={styles.factLabel}>Current GPS coordinates</Text><Text style={styles.factValue}>{latitude + ", " + longitude if latitude and longitude else "Unavailable"}</Text>
             <Text style={styles.factLabel}>Accuracy</Text><Text style={styles.factValue}>{accuracy if accuracy else "Unavailable"}</Text>
