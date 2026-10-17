@@ -25,6 +25,21 @@ def DestinationCard(place: dict, saved: bool, distanceLabel: str, onSave: Callab
 }
 
 def DetailPage(place: dict, onBack: Callable[[], None]) -> JsxElement {
+    has reviews: list[dict] = [],
+        rating: int = 0, perceivedRisk: str = "Moderate", climbingTime: str = "",
+        reviewDifficulty: str = "", trailConditions: str = "", experience: str = "", incidentNote: str = "",
+        reviewStatus: str = "";
+    def submitReview {
+        if rating < 1 or rating > 5 or not reviewDifficulty.strip() or not trailConditions.strip() or not experience.strip() {
+            reviewStatus = "Please choose a star rating and complete difficulty, trail conditions, and experience.";
+            return;
+        }
+        nowText = str(new(Date).toISOString());
+        review = {"rid": nowText + str(len(reviews)), "mountain_id": place["id"], "date": nowText[:10], "rating": rating, "risk": perceivedRisk, "climbing_time": climbingTime.strip() if climbingTime.strip() else "Not provided", "difficulty": reviewDifficulty.strip(), "conditions": trailConditions.strip(), "experience": experience.strip(), "incident": incidentNote.strip()};
+        reviews = reviews + [review];
+        rating = 0; climbingTime = ""; reviewDifficulty = ""; trailConditions = ""; experience = ""; incidentNote = "";
+        reviewStatus = "Review added for this mountain in this session. It is a community report, not verified.";
+    }
     return <View style={{"gap": 16}}>
         <Pressable style={styles.backButton} onPress={onBack}><Text style={styles.outlineText}>‹  Back to trails</Text></Pressable>
         <View style={styles.detailHero}><Image source={{"uri": place["image"]}} style={styles.detailPhoto} resizeMode="cover"/><View style={styles.heroShade}/><View style={styles.detailHeader}><Text style={styles.heroTitle}>{place["name"]}</Text><Text style={styles.heroSub}>{place["district"]}</Text></View></View>
@@ -37,6 +52,21 @@ def DetailPage(place: dict, onBack: Callable[[], None]) -> JsxElement {
         <View style={styles.card}><Text style={styles.sectionTitle}>Permissions</Text><Text style={styles.factLabel}>Legal access · permits · guide requirement</Text><Text style={styles.factValue}>{place["access"]} · {place["permit"]} · {place["guide"]}</Text><Text style={styles.factLabel}>Official permission contact</Text><Text style={styles.factValue}>{place["contact"]}</Text></View>
         <View style={styles.card}><Text style={styles.sectionTitle}>Camping</Text><Text style={styles.factLabel}>Availability</Text><Text style={styles.factValue}>{place["camp"]}</Text><Text style={styles.factLabel}>Location · price · facilities</Text><Text style={styles.factValue}>{place["camp_location"]} · {place["camp_price"]} · {place["camp_facilities"]}</Text><Text style={styles.factLabel}>Booking contact · restrictions</Text><Text style={styles.factValue}>{place["camp_contact"]} · {place["camp_restrictions"]}</Text></View>
         <View style={styles.card}><Text style={styles.sectionTitle}>Facilities</Text><Text style={styles.factValue}>Facilities: {place["facilities"]}</Text><Text style={styles.factValue}>Water sources: {place["water"]}</Text><Text style={styles.factValue}>Parking: {place["parking"]}</Text></View>
+        <View style={styles.card}><Text style={styles.sectionTitle}>Reviews &amp; Experiences</Text><Text style={styles.tiny}>Session-only community reports. They are not verified reviews or official accident records; no user identity or persistent shared storage is configured.</Text>
+            {if len(reviews) == 0 { <View style={styles.emptyState}><Text style={styles.body}>No reviews for this mountain yet.</Text></View> } else { for r in reviews { if r["mountain_id"] == place["id"] { <View key={r["rid"]} style={styles.card}><Text style={styles.factValue}>{str(r["rating"])} / 5 stars · {r["date"]}</Text><Text style={styles.factLabel}>Perceived risk: {r["risk"]} · Difficulty: {r["difficulty"]}</Text><Text style={styles.body}>Climbing time: {r["climbing_time"]}</Text><Text style={styles.body}>Trail conditions: {r["conditions"]}</Text><Text style={styles.body}>{r["experience"]}</Text><Text style={styles.tiny}>Community-reported incidents, not verified accident records: {r["incident"] if r["incident"] else "None reported"}</Text></View> } } }}
+            <Text style={styles.sectionTitle}>Add a review</Text>
+            <Text style={styles.filterLabel}>OVERALL RATING (REQUIRED)</Text>
+            <View style={styles.chipRow}><Pressable style={styles.outlineButton} onPress={lambda { rating = 1; }}><Text style={styles.outlineText}>1 star</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { rating = 2; }}><Text style={styles.outlineText}>2 stars</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { rating = 3; }}><Text style={styles.outlineText}>3 stars</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { rating = 4; }}><Text style={styles.outlineText}>4 stars</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { rating = 5; }}><Text style={styles.outlineText}>5 stars</Text></Pressable></View>
+            <Text style={styles.filterLabel}>YOUR PERCEIVED RISK</Text><View style={styles.chipRow}><Pressable style={styles.outlineButton} onPress={lambda { perceivedRisk = "Low"; }}><Text style={styles.outlineText}>Low</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { perceivedRisk = "Moderate"; }}><Text style={styles.outlineText}>Moderate</Text></Pressable><Pressable style={styles.outlineButton} onPress={lambda { perceivedRisk = "High"; }}><Text style={styles.outlineText}>High</Text></Pressable></View>
+            <TextInput style={styles.searchInput} value={climbingTime} placeholder="Actual climbing time (optional)" placeholderTextColor={LIGHT["muted"]} onChangeText={lambda (v: str) { climbingTime = v; }}/>
+            <TextInput style={styles.searchInput} value={reviewDifficulty} placeholder="Hiking difficulty (required)" placeholderTextColor={LIGHT["muted"]} onChangeText={lambda (v: str) { reviewDifficulty = v; }}/>
+            <TextInput style={styles.searchInput} value={trailConditions} placeholder="Trail conditions (required)" placeholderTextColor={LIGHT["muted"]} onChangeText={lambda (v: str) { trailConditions = v; }}/>
+            <TextInput style={styles.searchInput} value={experience} placeholder="Your experience (required)" placeholderTextColor={LIGHT["muted"]} multiline={True} onChangeText={lambda (v: str) { experience = v; }}/>
+            <TextInput style={styles.searchInput} value={incidentNote} placeholder="Injuries or accidents experienced/witnessed (optional, unverified)" placeholderTextColor={LIGHT["muted"]} multiline={True} onChangeText={lambda (v: str) { incidentNote = v; }}/>
+            <Text style={styles.tiny}>Incident notes are community-reported and must not be treated as confirmed accident history.</Text>
+            <Pressable style={styles.button} onPress={lambda { submitReview(); }}><Text style={styles.buttonText}>Submit review</Text></Pressable>
+            <Text style={styles.tiny}>{reviewStatus if reviewStatus else "Reviews are stored only in this detail screen session; no photo upload or shared persistence is available."}</Text>
+        </View>
         <View style={styles.card}><Text style={styles.sectionTitle}>Mountain weather</Text><Text style={styles.riskUnknownText}>Insufficient weather data</Text><Text style={styles.factValue}>No verified mountain coordinates. No forecast requested.</Text><Text style={styles.tiny}>Temperature, rainfall, wind, hourly/daily outlook and hiking warnings are unavailable until a weather provider is configured. This is not a safety assessment.</Text><Text style={styles.factValue}>Open Hiking weather from Home for provider setup information.</Text></View>
         <View style={styles.notice}><Text style={styles.noticeText}>Development sample. Details are unverified. Confirm with official local sources before visiting.</Text></View>
     </View>;
