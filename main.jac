@@ -44,13 +44,18 @@ def:pub app -> JsxElement {
     has activeTab: str = "Home", query: str = "", savedIds: list[str] = [], detailId: str = "", selectedWeather: str = "All", pendingWeather: str = "All", exploreMode: str = "List", gpsLat: str = "", gpsLon: str = "", gpsDistanceMessage: str = "", selectedRisk: str = "All", selectedAccess: str = "All", selectedCamp: str = "All", selectedDifficulty: str = "All", selectedDistance: str = "All", sortMode: str = "Default", pendingRisk: str = "All", pendingAccess: str = "All", pendingCamp: str = "All", pendingDifficulty: str = "All", pendingDistance: str = "All", startLocation: str = "Browse all locations", startingRadius: int = 50;
     viewport = useWindowDimensions();
     filteredPlaces = [p for p in destinations if (not query or query.lower() in p["name"].lower() or query.lower() in p["district"].lower() or query.lower() in p["difficulty"].lower() or query.lower() in p["camp"].lower()) and (selectedRisk == "All" or p["risk_key"] == selectedRisk) and (selectedAccess == "All" or p["access_key"] == selectedAccess) and (selectedCamp == "All" or p["camp_key"] == selectedCamp) and (selectedDifficulty == "All" or p["difficulty"] == selectedDifficulty) and (selectedDistance == "All" or (p["distance_known"] and selectedDistance != "Nearest" and (p["distance_km"] as float) <= startingRadius) or (selectedDistance == "Nearest" and p["coordinates_known"] and startLocation != "Browse all locations")) and (selectedWeather == "All" or p["weather_suitability"] == selectedWeather)];
-    rankedPlaces = filteredPlaces;
-    if sortMode == "Safest" { rankedPlaces = [p for p in destinations if p in filteredPlaces and p["risk_key"] == "Low"] + [p for p in destinations if p in filteredPlaces and p["risk_key"] == "Moderate"] + [p for p in destinations if p in filteredPlaces and p["risk_key"] == "High"] + [p for p in destinations if p in filteredPlaces and p["risk_key"] == "Unknown"]; }
-    elif sortMode == "Nearest" and startLocation != "Browse all locations" { rankedPlaces = [p for p in filteredPlaces if p["coordinates_known"]]; }
-    elif sortMode == "Shortest" { rankedPlaces = [p for p in filteredPlaces if p["trail_distance_known"]]; }
-    elif sortMode == "Highest" { rankedPlaces = [p for p in filteredPlaces if p["elevation_known"]]; }
-    elif sortMode == "Time" { rankedPlaces = [p for p in filteredPlaces if p["time_known"]]; }
-    elif sortMode == "Rating" { rankedPlaces = [p for p in filteredPlaces if p["rating_known"]]; }
+    def rankPlaces(items: list[dict]) -> list[dict] {
+        if sortMode == "Safest" {
+            return [p for p in destinations if p in items and p["risk_key"] == "Low"] + [p for p in destinations if p in items and p["risk_key"] == "Moderate"] + [p for p in destinations if p in items and p["risk_key"] == "High"] + [p for p in destinations if p in items and p["risk_key"] == "Unknown"];
+        }
+        elif sortMode == "Nearest" and startLocation != "Browse all locations" { return [p for p in items if p["coordinates_known"]]; }
+        elif sortMode == "Shortest" { return [p for p in items if p["trail_distance_known"]]; }
+        elif sortMode == "Highest" { return [p for p in items if p["elevation_known"]]; }
+        elif sortMode == "Time" { return [p for p in items if p["time_known"]]; }
+        elif sortMode == "Rating" { return [p for p in items if p["rating_known"]]; }
+        return items;
+    }
+    rankedPlaces = rankPlaces(filteredPlaces);
     savedPlaces = [p for p in destinations if p["id"] in savedIds];
     selectedPlace = {};
     for p in destinations { if p["id"] == detailId { selectedPlace = p; } }
